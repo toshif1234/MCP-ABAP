@@ -1,0 +1,7 @@
+[
+  { "key": "SAP_URL", "label": "SAP URL", "type": "text", "required": true, "default": "https://<host>:<port>" },
+  { "key": "SAP_USER", "label": "SAP User", "type": "text", "required": true },
+  { "key": "SAP_PASSWORD", "label": "SAP Password", "type": "password", "required": true },
+  { "key": "SAP_CLIENT", "label": "SAP Client", "type": "text", "required": false },
+  { "key": "SAP_LANGUAGE", "label": "SAP Language", "type": "text", "required": false, "default": "EN" }
+]

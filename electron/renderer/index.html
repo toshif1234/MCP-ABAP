@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Körber Stellium AI Connector</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img style="width: 80%;" src="https://koerber-stellium.com/wp-content/uploads/2026/02/Korber_Stellium_Black-e1772874735722-1536x383.webp" alt="Körber Stellium Logo" class="logo">
+      <h1>Körber Stellium AI Connector</h1>
+      <p class="description">
+        Enter your SAP connection details below. These will be saved locally.<br>
+        Developed by <b>Toshif & Lohith</b>
+      </p>
+    </div>
+
+    <div class="modules-container">
+      <div class="module-card active">
+        <div class="module-icon">⚙️</div>
+        <h3>ABAP</h3>
+        <p>Active</p>
+      </div>
+      <div class="module-card disabled">
+        <div class="module-icon">📱</div>
+        <h3>Fiori</h3>
+        <p>Coming Soon</p>
+      </div>
+      <div class="module-card disabled">
+        <div class="module-icon">☁️</div>
+        <h3>CAP</h3>
+        <p>Coming Soon</p>
+      </div>
+      <div class="module-card disabled">
+        <div class="module-icon">✉️</div>
+        <h3>Email</h3>
+        <p>Coming Soon</p>
+      </div>
+    </div>
+    
+    <form id="configForm">
+      <div id="formFields"></div>
+      
+      <button type="submit" id="saveBtn">Save and Connect</button>
+    </form>
+    
+    <div id="commandInfo" class="hidden">
+      <h3>Configuration Saved!</h3>
+      <p>Use the following configuration in your MCP client (e.g. Claude Desktop):</p>
+      <pre id="commandBlock"></pre>
+      <button id="copyBtn" type="button">Copy JSON</button>
+    </div>
+  </div>
+  
+  <script src="renderer.js"></script>
+</body>
+</html>
