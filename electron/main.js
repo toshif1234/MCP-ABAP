@@ -181,6 +181,29 @@ app.whenReady().then(() => {
       
       currentConfig.mcpServers["koerber-stellium-SAP-Connector"] = configJson;
       
+      currentConfig.mcpServers["cds-mcp"] = {
+        "command": "npx",
+        "args": ["-y", "@cap-js/mcp-server"]
+      };
+
+      let projectsRoot = path.join(os.homedir(), "cap-projects");
+      if (fs.existsSync(ENV_FILE)) {
+        const envConfig = dotenv.parse(fs.readFileSync(ENV_FILE));
+        if (envConfig.PROJECTS_ROOT && envConfig.PROJECTS_ROOT.trim() !== "") {
+          projectsRoot = envConfig.PROJECTS_ROOT.trim();
+        }
+      }
+      projectsRoot = path.resolve(projectsRoot);
+
+      currentConfig.mcpServers["filesystem"] = {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          projectsRoot
+        ]
+      };
+      
       fs.writeFileSync(claudeConfigPath, JSON.stringify(currentConfig, null, 2));
       return { success: true, path: claudeConfigPath };
     } else {

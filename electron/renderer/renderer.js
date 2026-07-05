@@ -9,6 +9,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const schema = await window.electronAPI.getSchema();
   const existingEnv = await window.electronAPI.loadEnv();
 
+  let activeModule = 'abap';
+
+  // Group fields by module
+  const abapFields = document.createElement('div');
+  abapFields.id = 'abap-fields';
+  
+  const capFields = document.createElement('div');
+  capFields.id = 'cap-fields';
+  capFields.style.display = 'none';
+
   // Generate form fields
   schema.forEach(field => {
     const fieldDiv = document.createElement('div');
@@ -36,8 +46,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fieldDiv.appendChild(label);
     fieldDiv.appendChild(input);
-    formFieldsDiv.appendChild(fieldDiv);
+
+    if (field.module === 'cap') {
+      capFields.appendChild(fieldDiv);
+    } else {
+      abapFields.appendChild(fieldDiv);
+    }
   });
+
+  formFieldsDiv.appendChild(abapFields);
+  formFieldsDiv.appendChild(capFields);
+
+  // Handle module switching
+  const moduleCards = document.querySelectorAll('.module-card:not(.disabled)');
+  moduleCards.forEach(card => {
+    card.addEventListener('click', () => {
+      // Remove active class and set text to Inactive
+      moduleCards.forEach(c => {
+        c.classList.remove('active');
+        c.querySelector('p').textContent = 'Inactive';
+      });
+      
+      // Add active class and set text to Active
+      card.classList.add('active');
+      card.querySelector('p').textContent = 'Active';
+      
+      activeModule = card.dataset.module;
+      
+      // Toggle form fields
+      if (activeModule === 'abap') {
+        abapFields.style.display = 'block';
+        capFields.style.display = 'none';
+      } else if (activeModule === 'cap') {
+        abapFields.style.display = 'none';
+        capFields.style.display = 'block';
+      }
+    });
+  });
+
 
   // Handle form submission
   configForm.addEventListener('submit', async (e) => {

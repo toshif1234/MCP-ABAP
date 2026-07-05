@@ -36,6 +36,7 @@ import { AtcHandlers } from './handlers/AtcHandlers.js';
 import { TraceHandlers } from './handlers/TraceHandlers.js';
 import { RefactorHandlers } from './handlers/RefactorHandlers.js';
 import { RevisionHandlers } from './handlers/RevisionHandlers.js';
+import { CAP_TOOLS, handleCapToolCall } from './cap-tools.js';
 
 config({ path: path.resolve(__dirname, '../.env') });
 
@@ -201,6 +202,7 @@ export class AbapAdtServer extends Server {
             ...this.traceHandlers.getTools(),
             ...this.refactorHandlers.getTools(),
             ...this.revisionHandlers.getTools(),
+            ...CAP_TOOLS,
             {
             name: 'healthcheck',
             description: 'Check server health and connectivity',
@@ -215,6 +217,10 @@ export class AbapAdtServer extends Server {
 
     this.setRequestHandler(CallToolRequestSchema, async (request) => {
       try {
+        if (CAP_TOOLS.some(t => t.name === request.params.name)) {
+          return await handleCapToolCall(request.params.name, request.params.arguments);
+        }
+
         let result: any;
         
         switch (request.params.name) {
