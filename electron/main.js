@@ -66,7 +66,7 @@ if (_isServerMode) {
   // Electron still needs an 'app ready' handler to stay alive
   app.on('ready', () => { /* no window */ });
 
-  process.on('SIGINT',  () => app.quit());
+  process.on('SIGINT', () => app.quit());
   process.on('SIGTERM', () => app.quit());
 
   return;
@@ -123,7 +123,7 @@ app.whenReady().then(() => {
   ipcMain.handle('get-server-command', () => {
     const isPackaged = app.isPackaged;
     const appRoot = path.resolve(__dirname, '..');
-    
+
     if (isPackaged) {
       // In a packaged app, the executable is the app itself.
       // We want to run it as a Node process by setting ELECTRON_RUN_AS_NODE=1.
@@ -174,13 +174,13 @@ app.whenReady().then(() => {
       } catch (e) {
         // ignore parsing error, assume empty
       }
-      
+
       if (!currentConfig.mcpServers) {
         currentConfig.mcpServers = {};
       }
-      
+
       currentConfig.mcpServers["koerber-stellium-SAP-Connector"] = configJson;
-      
+
       currentConfig.mcpServers["cds-mcp"] = {
         "command": "npx",
         "args": ["-y", "@cap-js/mcp-server"]
@@ -203,11 +203,34 @@ app.whenReady().then(() => {
           projectsRoot
         ]
       };
-      
+
+      currentConfig.mcpServers["Fiori-mcp"] = {
+        "type": "stdio",
+        "timeout": 600,
+        "command": "npx",
+        "args": ["--yes", "@sap-ux/fiori-mcp-server@latest", "fiori-mcp"]
+      };
+
       fs.writeFileSync(claudeConfigPath, JSON.stringify(currentConfig, null, 2));
       return { success: true, path: claudeConfigPath };
     } else {
       return { success: false };
+    }
+  });
+
+  ipcMain.handle('authenticate-mcp', async (event, username, password) => {
+    try {
+      const response = await fetch('https://mcp.cfapps.ap21.hana.ondemand.com/api/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+      return { success: data && data.status === 'access success', data };
+    } catch (e) {
+      return { success: false, error: e.message };
     }
   });
 

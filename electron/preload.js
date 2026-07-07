@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   loadEnv: () => ipcRenderer.invoke('load-env'),
   saveEnv: (values) => ipcRenderer.invoke('save-env', values),
   getServerCommandHint: () => ipcRenderer.invoke('get-server-command'),
-  updateClaudeConfig: (configJson) => ipcRenderer.invoke('update-claude-config', configJson)
+  updateClaudeConfig: (configJson) => ipcRenderer.invoke('update-claude-config', configJson),
+  authenticateMcp: (username, password) => ipcRenderer.invoke('authenticate-mcp', username, password)
 });

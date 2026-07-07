@@ -1,4 +1,7 @@
 [
+  { "key": "MCP_USERNAME", "label": "MCP Auth Username", "type": "text", "required": false, "module": "auth" },
+  { "key": "MCP_PASSWORD", "label": "MCP Auth Password", "type": "password", "required": false, "module": "auth" },
+
   { "key": "SAP_URL", "label": "SAP URL", "type": "text", "required": true, "default": "https://<host>:<port>", "module": "abap" },
   { "key": "SAP_USER", "label": "SAP User", "type": "text", "required": true, "module": "abap" },
   { "key": "SAP_PASSWORD", "label": "SAP Password", "type": "password", "required": true, "module": "abap" },

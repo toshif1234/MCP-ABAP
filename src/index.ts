@@ -37,6 +37,7 @@ import { TraceHandlers } from './handlers/TraceHandlers.js';
 import { RefactorHandlers } from './handlers/RefactorHandlers.js';
 import { RevisionHandlers } from './handlers/RevisionHandlers.js';
 import { CAP_TOOLS, handleCapToolCall } from './cap-tools.js';
+import { authenticateMcpUser } from './authMiddleware.js';
 
 config({ path: path.resolve(__dirname, '../.env') });
 
@@ -165,7 +166,7 @@ export class AbapAdtServer extends Server {
       content: [{
         type: 'text',
         text: JSON.stringify({
-          error: 'Internal server error',
+          error: (error as Error).message || 'Internal server error',
           code: ErrorCode.InternalError
         })
       }],
@@ -217,6 +218,8 @@ export class AbapAdtServer extends Server {
 
     this.setRequestHandler(CallToolRequestSchema, async (request) => {
       try {
+        await authenticateMcpUser();
+
         if (CAP_TOOLS.some(t => t.name === request.params.name)) {
           return await handleCapToolCall(request.params.name, request.params.arguments);
         }

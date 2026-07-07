@@ -9,11 +9,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const schema = await window.electronAPI.getSchema();
   const existingEnv = await window.electronAPI.loadEnv();
 
-  let activeModule = 'abap';
+  let activeModule = 'abap'; // default active module
 
   // Group fields by module
+  const authFieldsContainer = document.getElementById('authFieldsContainer');
+
   const abapFields = document.createElement('div');
   abapFields.id = 'abap-fields';
+  abapFields.style.display = 'block';
   
   const capFields = document.createElement('div');
   capFields.id = 'cap-fields';
@@ -49,6 +52,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (field.module === 'cap') {
       capFields.appendChild(fieldDiv);
+    } else if (field.module === 'auth') {
+      authFieldsContainer.appendChild(fieldDiv);
     } else {
       abapFields.appendChild(fieldDiv);
     }
@@ -84,18 +89,111 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // Handle auth modal and toggle button logic
+  const authToggleBtn = document.getElementById('authToggleBtn');
+  const authModal = document.getElementById('authModal');
+  const closeAuthModal = document.getElementById('closeAuthModal');
+  const authForm = document.getElementById('authForm');
+
+  function updateAuthToggle() {
+    if (existingEnv['MCP_USERNAME']) {
+      authToggleBtn.textContent = 'Logout';
+    } else {
+      authToggleBtn.textContent = 'Login';
+    }
+  }
+
+  updateAuthToggle();
+
+  // Show auth modal on startup if not logged in
+  if (!existingEnv['MCP_USERNAME']) {
+    authModal.classList.remove('hidden');
+  }
+
+  authToggleBtn.addEventListener('click', async () => {
+    if (authToggleBtn.textContent === 'Logout') {
+      // Logout action
+      delete existingEnv['MCP_USERNAME'];
+      delete existingEnv['MCP_PASSWORD'];
+      
+      // Clear auth form fields visually
+      document.querySelectorAll('#authForm input').forEach(input => {
+        if (input.name === 'MCP_USERNAME' || input.name === 'MCP_PASSWORD') {
+          input.value = '';
+        }
+      });
+      
+      await window.electronAPI.saveEnv(existingEnv);
+      updateAuthToggle();
+    } else {
+      // Show login modal
+      authModal.classList.remove('hidden');
+    }
+  });
+
+  closeAuthModal.addEventListener('click', () => {
+    authModal.classList.add('hidden');
+  });
+
+  const authMessage = document.getElementById('authMessage');
+  const authSaveBtn = document.getElementById('authSaveBtn');
+
+  function showAuthMessage(msg, type) {
+    authMessage.textContent = msg;
+    authMessage.className = 'auth-message';
+    authMessage.classList.add(type);
+    authMessage.classList.remove('hidden');
+  }
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(authForm);
+    const username = formData.get('MCP_USERNAME');
+    const password = formData.get('MCP_PASSWORD');
+
+    const originalText = authSaveBtn.textContent;
+    authSaveBtn.textContent = 'Authenticating...';
+    authSaveBtn.disabled = true;
+    authMessage.classList.add('hidden');
+
+    try {
+      const result = await window.electronAPI.authenticateMcp(username, password);
+      
+      if (result.success) {
+        showAuthMessage('Authenticated successfully!', 'success');
+        
+        for (let [key, value] of formData.entries()) {
+          existingEnv[key] = value;
+        }
+        await window.electronAPI.saveEnv(existingEnv);
+        updateAuthToggle();
+        
+        setTimeout(() => {
+          authModal.classList.add('hidden');
+          authMessage.classList.add('hidden');
+        }, 1500);
+      } else {
+        showAuthMessage(result.error || 'Authentication failed. Please check your credentials.', 'error');
+      }
+    } catch (error) {
+      showAuthMessage('An error occurred during authentication.', 'error');
+    } finally {
+      authSaveBtn.textContent = originalText;
+      authSaveBtn.disabled = false;
+    }
+  });
+
 
   // Handle form submission
   configForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const formData = new FormData(configForm);
-    const values = {};
     for (let [key, value] of formData.entries()) {
-      values[key] = value;
+      existingEnv[key] = value;
     }
 
-    await window.electronAPI.saveEnv(values);
+    await window.electronAPI.saveEnv(existingEnv);
     
     const cmdHint = await window.electronAPI.getServerCommandHint();
     const serverConfig = {

@@ -27,11 +27,11 @@
             <p>Inactive</p>
           </div>
         </div>
-        <div class="module-card disabled">
+        <div class="module-card">
           <div class="module-icon">📱</div>
           <div class="module-text">
             <h3>Fiori</h3>
-            <p>Coming Soon</p>
+            <p>Inactive</p>
           </div>
         </div>
         <div class="module-card disabled">
@@ -41,6 +41,10 @@
             <p>Coming Soon</p>
           </div>
         </div>
+      </div>
+
+      <div class="auth-toggle-container">
+        <button id="authToggleBtn" class="auth-toggle-btn">Login</button>
       </div>
 
       <div class="credits">
@@ -70,6 +74,20 @@
     </main>
   </div>
   
+  <div id="authModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Authentication</h2>
+        <button type="button" id="closeAuthModal" class="close-btn">&times;</button>
+      </div>
+      <form id="authForm">
+        <div id="authMessage" class="auth-message hidden"></div>
+        <div id="authFieldsContainer"></div>
+        <button type="submit" id="authSaveBtn">Login</button>
+      </form>
+    </div>
+  </div>
+
   <script src="renderer.js"></script>
 </body>
 </html>
