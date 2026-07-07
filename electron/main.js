@@ -234,6 +234,71 @@ app.whenReady().then(() => {
     }
   });
 
+  ipcMain.handle('test-abap-connection', async (event, config) => {
+    try {
+      const { ADTClient, session_types } = require('abap-adt-api');
+      const client = new ADTClient(
+        config.SAP_URL,
+        config.SAP_USER,
+        config.SAP_PASSWORD,
+        config.SAP_CLIENT || '',
+        config.SAP_LANGUAGE || 'EN'
+      );
+      client.stateful = session_types.stateless;
+      await client.login();
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  });
+
+  ipcMain.handle('test-cap-connection', async (event, config) => {
+    try {
+      const response = await fetch(`${config.CF_API}/v3`, { method: 'GET' });
+      if (response.ok) {
+        return { success: true };
+      }
+      return { success: false, error: 'Could not reach CF API' };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  });
+
+  ipcMain.handle('fetch-skills', async (event, username, password) => {
+    try {
+      const response = await fetch('https://mcp.cfapps.ap21.hana.ondemand.com/api/skills', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+      
+      const data = await response.json();
+      return { success: response.ok, data: data, error: response.ok ? null : (data.message || 'Error fetching skills') };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  });
+
+  ipcMain.handle('test-github-connection', async (event, config) => {
+    try {
+      const response = await fetch('https://api.github.com/user', {
+        headers: {
+          'Authorization': `Bearer ${config.GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Koeber-Stellium-Connector'
+        }
+      });
+      if (response.ok) {
+        return { success: true };
+      }
+      return { success: false, error: 'Invalid GitHub Token' };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  });
+
   createWindow();
 
   app.on('activate', function () {

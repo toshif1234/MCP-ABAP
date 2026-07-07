@@ -13,8 +13,8 @@
   { "key": "CF_PASSWORD", "label": "Cloud Foundry Password", "type": "password", "required": true, "module": "cap" },
   { "key": "CF_ORG", "label": "Cloud Foundry Org", "type": "text", "required": true, "module": "cap" },
   { "key": "CF_SPACE", "label": "Cloud Foundry Space", "type": "text", "required": true, "module": "cap" },
-  { "key": "GITHUB_TOKEN", "label": "GitHub Personal Access Token", "type": "password", "required": false, "module": "cap" },
-  { "key": "GIT_AUTHOR_NAME", "label": "Git Author Name", "type": "text", "required": false, "default": "Claude Agent", "module": "cap" },
-  { "key": "GIT_AUTHOR_EMAIL", "label": "Git Author Email", "type": "text", "required": false, "default": "claude-agent@local", "module": "cap" },
+  { "key": "GITHUB_TOKEN", "label": "GitHub Personal Access Token", "type": "password", "required": false, "module": "github" },
+  { "key": "GIT_AUTHOR_NAME", "label": "Git Author Name", "type": "text", "required": false, "default": "Claude Agent", "module": "github" },
+  { "key": "GIT_AUTHOR_EMAIL", "label": "Git Author Email", "type": "text", "required": false, "default": "claude-agent@local", "module": "github" },
   { "key": "PROJECTS_ROOT", "label": "Projects Sandbox Root Path", "type": "text", "required": false, "module": "cap" }
 ]

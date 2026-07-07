@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Körber Stellium AI Connector</title>
@@ -9,33 +9,73 @@
   <div class="dashboard-layout">
     <aside class="sidebar">
       <div class="brand">
-        <img style="width: 80%;" src="https://koerber-stellium.com/wp-content/uploads/2026/02/Korber_Stellium_Black-e1772874735722-1536x383.webp" alt="Körber Stellium Logo" class="logo">
+        <img src="https://koerber-stellium.com/wp-content/uploads/2026/02/Korber_Stellium_Black-e1772874735722-1536x383.webp" alt="Körber Stellium Logo" class="logo">
+        <span class="brand-sub">AI Connector</span>
       </div>
-      
+
+      <div class="nav-label">Modules</div>
+
       <div class="modules-container">
-        <div class="module-card active" data-module="abap">
-          <div class="module-icon">⚙️</div>
+        <div class="module-card active" data-module="abap" tabindex="0">
+          <div class="module-icon icon-abap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="5" width="14" height="14" rx="2"/>
+              <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/>
+              <rect x="9.5" y="9.5" width="5" height="5" rx="1"/>
+            </svg>
+          </div>
           <div class="module-text">
             <h3>ABAP</h3>
-            <p>Active</p>
-          </div>
-        </div>
-        <div class="module-card" data-module="cap">
-          <div class="module-icon">☁️</div>
-          <div class="module-text">
-            <h3>CAP</h3>
             <p>Inactive</p>
           </div>
         </div>
-        <div class="module-card">
-          <div class="module-icon">📱</div>
+
+        <div class="module-card" data-module="cap" tabindex="0">
+          <div class="module-icon icon-cap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.5 19a4.5 4.5 0 0 0 .42-8.98 6 6 0 0 0-11.7 1.62A4 4 0 0 0 7 19h10.5z"/>
+            </svg>
+          </div>
           <div class="module-text">
-            <h3>Fiori</h3>
+            <h3>CAP & Fiori</h3>
             <p>Inactive</p>
           </div>
         </div>
+
+        <div class="module-card" data-module="github" tabindex="0">
+          <div class="module-icon icon-github">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="6" cy="5" r="2.5"/>
+              <circle cx="6" cy="19" r="2.5"/>
+              <circle cx="18" cy="8" r="2.5"/>
+              <path d="M6 7.5v9M18 10.5a6 6 0 0 1-6 6H8.5"/>
+            </svg>
+          </div>
+          <div class="module-text">
+            <h3>GitHub</h3>
+            <p>Inactive</p>
+          </div>
+        </div>
+
+        <div class="module-card" data-module="skills" tabindex="0">
+          <div class="module-icon icon-skills">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="module-text">
+            <h3>Skills</h3>
+            <p>Inactive</p>
+          </div>
+        </div>
+
         <div class="module-card disabled">
-          <div class="module-icon">✉️</div>
+          <div class="module-icon icon-email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="M3 7l9 6 9-6"/>
+            </svg>
+          </div>
           <div class="module-text">
             <h3>Email</h3>
             <p>Coming Soon</p>
@@ -48,7 +88,7 @@
       </div>
 
       <div class="credits">
-        Developed by <b>Toshif & Lohith</b>
+        Developed by <b>Toshif &amp; Lohith</b>
       </div>
     </aside>
 
@@ -56,29 +96,58 @@
       <div class="header">
         <h1>Körber Stellium AI Connector</h1>
         <p class="description">
-          Enter your connection details below. These will be saved locally.
+          Enter your connection details below. These are stored locally on this machine.
         </p>
       </div>
-      
+
       <form id="configForm">
         <div id="formFields"></div>
-        <button type="submit" id="saveBtn">Save and Connect</button>
+        <div class="form-actions" id="formActions">
+          <div id="abapTestContainer" class="test-connection-container">
+            <button type="button" id="testAbapBtn" class="test-btn">Test Connection</button>
+            <div id="abapTestStatus" class="test-status hidden">
+              <span class="status-dot"></span>
+              <span class="status-text"></span>
+            </div>
+          </div>
+          <div id="capTestContainer" class="test-connection-container" style="display: none;">
+            <button type="button" id="testCapBtn" class="test-btn">Test Connection</button>
+            <div id="capTestStatus" class="test-status hidden">
+              <span class="status-dot"></span>
+              <span class="status-text"></span>
+            </div>
+          </div>
+          <div id="githubTestContainer" class="test-connection-container" style="display: none;">
+            <button type="button" id="testGithubBtn" class="test-btn">Test Connection</button>
+            <div id="githubTestStatus" class="test-status hidden">
+              <span class="status-dot"></span>
+              <span class="status-text"></span>
+            </div>
+          </div>
+          <button type="submit" id="saveBtn" class="primary-btn">Save</button>
+        </div>
       </form>
-      
+
       <div id="commandInfo" class="hidden">
-        <h3>Configuration Saved!</h3>
+        <h3>
+          <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M8.5 12.5l2.5 2.5 4.5-5"/>
+          </svg>
+          Configuration Saved
+        </h3>
         <p></p>
         <pre id="commandBlock"></pre>
         <button id="copyBtn" type="button">Copy JSON</button>
       </div>
     </main>
   </div>
-  
+
   <div id="authModal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-header">
         <h2>Authentication</h2>
-        <button type="button" id="closeAuthModal" class="close-btn">&times;</button>
+        <button type="button" id="closeAuthModal" class="close-btn" aria-label="Close">&times;</button>
       </div>
       <form id="authForm">
         <div id="authMessage" class="auth-message hidden"></div>
