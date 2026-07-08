@@ -513,7 +513,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (updateResult.success) {
       infoHeader.textContent = 'Configuration Saved and Connected!';
-      // infoText.innerHTML = `Successfully added <b>koerber-stellium-SAP-Connector</b> to your Claude Desktop config at:<br><code>${updateResult.path}</code><br><br>Please restart Claude Desktop to apply changes.`;
+      infoText.innerHTML = `Please restart Claude Desktop to apply changes.`;
       commandBlock.style.display = 'none';
       copyBtn.style.display = 'none';
     } else {
