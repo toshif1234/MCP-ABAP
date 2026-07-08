@@ -36,6 +36,7 @@ import { AtcHandlers } from './handlers/AtcHandlers.js';
 import { TraceHandlers } from './handlers/TraceHandlers.js';
 import { RefactorHandlers } from './handlers/RefactorHandlers.js';
 import { RevisionHandlers } from './handlers/RevisionHandlers.js';
+import { SkillHandlers } from './handlers/SkillHandlers.js';
 import { CAP_TOOLS, handleCapToolCall } from './cap-tools.js';
 import { authenticateMcpUser } from './authMiddleware.js';
 
@@ -68,6 +69,7 @@ export class AbapAdtServer extends Server {
     private traceHandlers: TraceHandlers;
     private refactorHandlers: RefactorHandlers;
     private revisionHandlers: RevisionHandlers;
+    private skillHandlers: SkillHandlers;
 
     constructor() {
     super(
@@ -122,7 +124,7 @@ export class AbapAdtServer extends Server {
     this.traceHandlers = new TraceHandlers(this.adtClient);
     this.refactorHandlers = new RefactorHandlers(this.adtClient);
     this.revisionHandlers = new RevisionHandlers(this.adtClient);
-
+    this.skillHandlers = new SkillHandlers(this.adtClient);
 
         // Setup tool handlers
     this.setupToolHandlers();
@@ -203,6 +205,7 @@ export class AbapAdtServer extends Server {
             ...this.traceHandlers.getTools(),
             ...this.refactorHandlers.getTools(),
             ...this.revisionHandlers.getTools(),
+            ...this.skillHandlers.getTools(),
             ...CAP_TOOLS,
             {
             name: 'healthcheck',
@@ -402,6 +405,10 @@ export class AbapAdtServer extends Server {
                 break;
             case 'revisions':
                 result = await this.revisionHandlers.handle(request.params.name, request.params.arguments);
+                break;
+            case 'list_skills':
+            case 'get_skill_md':
+                result = await this.skillHandlers.handle(request.params.name, request.params.arguments);
                 break;
             case 'healthcheck':
                 result = { status: 'healthy', timestamp: new Date().toISOString() };
