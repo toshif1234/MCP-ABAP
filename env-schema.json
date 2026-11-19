@@ -7,7 +7,8 @@
   { "key": "SAP_PASSWORD", "label": "SAP Password", "type": "password", "required": true, "module": "abap" },
   { "key": "SAP_CLIENT", "label": "SAP Client", "type": "text", "required": false, "module": "abap" },
   { "key": "SAP_LANGUAGE", "label": "SAP Language", "type": "text", "required": false, "default": "EN", "module": "abap" },
-  
+  { "key": "SAP_ALLOW_SELF_SIGNED", "label": "Allow self-signed / untrusted SSL certificates", "type": "checkbox", "required": false, "module": "abap" },
+
   { "key": "CF_API", "label": "Cloud Foundry API Endpoint", "type": "text", "required": true, "default": "https://api.cf.eu10.hana.ondemand.com", "module": "cap" },
   { "key": "CF_USERNAME", "label": "Cloud Foundry Username", "type": "text", "required": true, "module": "cap" },
   { "key": "CF_PASSWORD", "label": "Cloud Foundry Password", "type": "password", "required": true, "module": "cap" },

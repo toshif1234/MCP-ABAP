@@ -9,7 +9,7 @@ import {
   McpError,
   ErrorCode
 } from "@modelcontextprotocol/sdk/types.js";
-import { ADTClient, session_types } from "abap-adt-api";
+import { ADTClient, session_types, createSSLConfig } from "abap-adt-api";
 import path from 'path';
 import { AuthHandlers } from './handlers/AuthHandlers.js';
 import { TransportHandlers } from './handlers/TransportHandlers.js';
@@ -89,12 +89,14 @@ export class AbapAdtServer extends Server {
       throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
     }
     
+    const allowSelfSigned = process.env.SAP_ALLOW_SELF_SIGNED === 'true';
     this.adtClient = new ADTClient(
       process.env.SAP_URL as string,
       process.env.SAP_USER as string,
       process.env.SAP_PASSWORD as string,
       process.env.SAP_CLIENT as string,
-      process.env.SAP_LANGUAGE as string
+      process.env.SAP_LANGUAGE as string,
+      allowSelfSigned ? createSSLConfig(true) : undefined
     );
     this.adtClient.stateful = session_types.stateful
     

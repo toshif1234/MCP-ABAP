@@ -276,6 +276,22 @@ body {
   margin-bottom: 16px;
 }
 
+.form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group-checkbox input[type="checkbox"] {
+  width: auto;
+  padding: 0;
+  accent-color: var(--primary-color);
+}
+
+.form-group-checkbox label {
+  margin-bottom: 0;
+}
+
 label {
   display: block;
   font-size: 13px;

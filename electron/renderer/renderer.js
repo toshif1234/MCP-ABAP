@@ -61,20 +61,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     input.type = field.type;
     input.id = field.key;
     input.name = field.key;
-    
+
     if (field.required) {
       input.required = true;
     }
-    
-    // Set value or default
-    if (existingEnv[field.key]) {
+
+    if (field.type === 'checkbox') {
+      // Checkboxes report a fixed value when checked; unchecked ones are
+      // simply absent from FormData, so state lives in `.checked`.
+      input.value = 'true';
+      input.checked = existingEnv[field.key] === 'true';
+      fieldDiv.classList.add('form-group-checkbox');
+    } else if (existingEnv[field.key]) {
       input.value = existingEnv[field.key];
     } else if (field.default) {
       input.value = field.default;
     }
 
-    fieldDiv.appendChild(label);
-    fieldDiv.appendChild(input);
+    if (field.type === 'checkbox') {
+      // Checkbox reads better before its label ("[x] Allow ...").
+      fieldDiv.appendChild(input);
+      fieldDiv.appendChild(label);
+    } else {
+      fieldDiv.appendChild(label);
+      fieldDiv.appendChild(input);
+    }
 
     if (field.module === 'cap') {
       capFields.appendChild(fieldDiv);
@@ -356,7 +367,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       SAP_USER: formData.get('SAP_USER'),
       SAP_PASSWORD: formData.get('SAP_PASSWORD'),
       SAP_CLIENT: formData.get('SAP_CLIENT'),
-      SAP_LANGUAGE: formData.get('SAP_LANGUAGE')
+      SAP_LANGUAGE: formData.get('SAP_LANGUAGE'),
+      SAP_ALLOW_SELF_SIGNED: document.getElementById('SAP_ALLOW_SELF_SIGNED').checked
     };
 
     if (!config.SAP_URL || !config.SAP_USER || !config.SAP_PASSWORD) {
@@ -497,9 +509,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (let [key, value] of formData.entries()) {
       existingEnv[key] = value;
     }
+    // Unchecked checkboxes are omitted from FormData entirely, so their
+    // "off" state has to be captured explicitly or it never gets saved.
+    schema.filter(f => f.type === 'checkbox').forEach(f => {
+      const checkboxEl = document.getElementById(f.key);
+      if (checkboxEl) {
+        existingEnv[f.key] = String(checkboxEl.checked);
+      }
+    });
 
     await window.electronAPI.saveEnv(existingEnv);
-    
+
     const cmdHint = await window.electronAPI.getServerCommandHint();
     const serverConfig = {
       "command": cmdHint.command,

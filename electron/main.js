@@ -236,13 +236,15 @@ app.whenReady().then(() => {
 
   ipcMain.handle('test-abap-connection', async (event, config) => {
     try {
-      const { ADTClient, session_types } = require('abap-adt-api');
+      const { ADTClient, session_types, createSSLConfig } = require('abap-adt-api');
+      const sslOptions = config.SAP_ALLOW_SELF_SIGNED ? createSSLConfig(true) : undefined;
       const client = new ADTClient(
         config.SAP_URL,
         config.SAP_USER,
         config.SAP_PASSWORD,
         config.SAP_CLIENT || '',
-        config.SAP_LANGUAGE || 'EN'
+        config.SAP_LANGUAGE || 'EN',
+        sslOptions
       );
       client.stateful = session_types.stateless;
       await client.login();
